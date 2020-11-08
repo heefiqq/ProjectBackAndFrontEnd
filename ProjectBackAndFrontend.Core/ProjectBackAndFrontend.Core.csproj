@@ -86,10 +86,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config\DependenciesConfig.cs" />
-    <Compile Include="Models\Customer.cs" />
-    <Compile Include="Models\Offer.cs" />
-    <Compile Include="Models\Order.cs" />
-    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Customer\Customer.cs" />
+    <Compile Include="Models\Catalog\Offer.cs" />
+    <Compile Include="Models\Order\Order.cs" />
+    <Compile Include="Models\Catalog\Product.cs" />
     <Compile Include="ProjectBackAndFrontendEntities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

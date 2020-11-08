@@ -1,5 +1,4 @@
-﻿using ProjectBackAndFrontend.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,26 +6,27 @@ using System.Web.Mvc;
 
 namespace ProjectBackAndFrontend.Web.Controllers
 {
-    public class HomeController : Controller
+    public class ProductController : Controller
     {
+        // GET: Product
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: Home/Details/5
+        // GET: Product/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: Home/Create
+        // GET: Product/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Home/Create
+        // POST: Product/Create
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
@@ -42,13 +42,13 @@ namespace ProjectBackAndFrontend.Web.Controllers
             }
         }
 
-        // GET: Home/Edit/5
+        // GET: Product/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Home/Edit/5
+        // POST: Product/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -64,13 +64,13 @@ namespace ProjectBackAndFrontend.Web.Controllers
             }
         }
 
-        // GET: Home/Delete/5
+        // GET: Product/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Home/Delete/5
+        // POST: Product/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
