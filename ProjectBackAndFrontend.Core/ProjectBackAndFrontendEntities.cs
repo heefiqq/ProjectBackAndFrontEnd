@@ -24,7 +24,7 @@ namespace ProjectBackAndFrontend.Core
                 .HasMany(p => p.Offer)
                 .WithRequired(o => o.Product)
                 .HasForeignKey(o => o.ProductId)
-                .WillCascadeOnDelete(true);
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Order)
