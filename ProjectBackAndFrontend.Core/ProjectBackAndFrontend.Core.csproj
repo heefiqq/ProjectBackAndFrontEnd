@@ -92,6 +92,14 @@
     <Compile Include="Models\Catalog\Product.cs" />
     <Compile Include="ProjectBackAndFrontendEntities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\Catalog\IOfferService.cs" />
+    <Compile Include="Service\Catalog\IProductService.cs" />
+    <Compile Include="Service\Catalog\OfferService.cs" />
+    <Compile Include="Service\Catalog\ProductService.cs" />
+    <Compile Include="Service\Customer\CustomerService.cs" />
+    <Compile Include="Service\Customer\ICustomerService.cs" />
+    <Compile Include="Service\Order\IOrderService.cs" />
+    <Compile Include="Service\Order\OrderService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
