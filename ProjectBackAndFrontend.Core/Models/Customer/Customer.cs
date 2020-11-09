@@ -15,7 +15,7 @@ namespace ProjectBackAndFrontend.Core.Models
         }
 
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [StringLength(100)]

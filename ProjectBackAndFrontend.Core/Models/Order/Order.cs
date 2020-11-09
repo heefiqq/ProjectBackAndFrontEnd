@@ -23,7 +23,7 @@ namespace ProjectBackAndFrontend.Core.Models
 
         public float Sum { get; set; }
 
-        public Guid CustomerId { get; set; }
+        public int CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
         public virtual ICollection<Offer> Offer { get; set; }

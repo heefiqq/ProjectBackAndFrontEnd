@@ -8,12 +8,12 @@ namespace ProjectBackAndFrontend.Core.Service
     {
         void Create(Customer customer);
 
-        Customer Get(Guid Id);
+        Customer Get(int Id);
 
         List<Customer> GetAll();
 
         void Edit(Customer customer);
 
-        void Delete(Guid Id);
+        void Delete(int Id);
     }
 }

@@ -21,7 +21,7 @@ namespace ProjectBackAndFrontend.Core.Service
             db.SaveChanges();
         }
 
-        public Customer Get(Guid Id)
+        public Customer Get(int Id)
         {
             return db.Customer.AsNoTracking().Include(x => x.Order).FirstOrDefault(x => x.Id == Id);
         }
@@ -48,7 +48,7 @@ namespace ProjectBackAndFrontend.Core.Service
             db.SaveChanges();
         }
 
-        public void Delete(Guid Id)
+        public void Delete(int Id)
         {
             var customerDb = db.Customer.AsNoTracking().FirstOrDefault(x => x.Id == Id);
 
