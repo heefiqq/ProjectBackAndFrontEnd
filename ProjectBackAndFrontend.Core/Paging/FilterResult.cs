@@ -15,7 +15,5 @@ namespace ProjectBackAndFrontend.Core.Paging
         public int TotalItemsCount { get; set; }
 
         public int PageIndex { get; set; }
-
-        public string TotalString { get; set; }
     }
 }
