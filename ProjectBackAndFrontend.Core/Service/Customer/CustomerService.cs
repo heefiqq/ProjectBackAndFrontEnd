@@ -50,11 +50,9 @@ namespace ProjectBackAndFrontend.Core.Service
 
         public void Delete(int Id)
         {
-            var customerDb = db.Customer.AsNoTracking().FirstOrDefault(x => x.Id == Id);
+            Customer customerDb = db.Customer.AsNoTracking().Single(x => x.Id == Id);
 
-            if (customerDb == null)
-                return;
-
+            db.Customer.Attach(customerDb);
             db.Customer.Remove(customerDb);
             db.SaveChanges();
         }
