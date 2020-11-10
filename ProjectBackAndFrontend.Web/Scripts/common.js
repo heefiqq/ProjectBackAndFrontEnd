@@ -57,6 +57,33 @@ function save(url, form, modalName, fetchTableFn, element = 'body') {
     })
 }
 
+function deleteData(url, id, fetchTableFn, element = 'body') {
+    $(element).prepend($loading);
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        data: { Id: id },
+        success: function (data) {
+            if (data.result == true) {
+                messagesShow('Успешно удалено.');
+                fetchTableFn(currentPage);
+            }
+            else {
+                messagesShow(data.errorMessage);
+            }
+        },
+        error: function (data) {
+            if (data.result == false) {
+                messagesShow('Ошибка!');
+            }
+        }
+    }).done(function () {
+        $('#loader').remove();
+    })
+}
+
 //modal
 
 function fetchModal(url, method, modalId, id = 0, element = 'body') {
