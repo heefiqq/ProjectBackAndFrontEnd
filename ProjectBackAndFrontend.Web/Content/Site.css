@@ -22,3 +22,22 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.toast {
+    max-width: 350px;
+    display: none;
+    opacity: 0;
+    position: absolute;
+    bottom: 40px;
+    right: 0;
+    z-index: 9999;
+    background-color: rgba(255,255,255,.85);
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: .25rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.1);
+}
+
+    .toast .toast-body {
+        padding: .75rem;
+    }

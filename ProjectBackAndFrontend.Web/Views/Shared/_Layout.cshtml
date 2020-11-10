@@ -8,14 +8,16 @@
     </head>
     <body>
         @Html.Partial("_Header")
+        @Scripts.Render("~/bundles/jquery")
         <div class="container body-content">
             @RenderBody()
             <hr />
             @Html.Partial("_Footer")
         </div>
-        
-        @Scripts.Render("~/bundles/jquery")
+
         @Scripts.Render("~/bundles/bootstrap")
         @RenderSection("scripts", required: false)
+        <script src="@Url.Content("~/Scripts/common.js")"></script>
+        <script src="@Url.Content("~/Scripts/fetchTable.service.js")"></script>
     </body>
 </html>
