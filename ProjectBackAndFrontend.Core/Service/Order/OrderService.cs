@@ -30,7 +30,7 @@ namespace ProjectBackAndFrontend.Core.Service
             return db.Order.AsNoTracking().Include(x => x.Offer).Include(x => x.Customer).ToList();
         }
 
-        public void Update(Order order)
+        public void Edit(Order order)
         {
             var orderDb = db.Order.AsNoTracking().FirstOrDefault(x => x.Id == order.Id);
 

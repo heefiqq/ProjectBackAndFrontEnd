@@ -11,7 +11,7 @@ namespace ProjectBackAndFrontend.Core.Service
 
         List<Order> GetAll();
 
-        void Update(Order order);
+        void Edit(Order order);
 
         void Delete(int Id);
     }
