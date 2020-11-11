@@ -60,7 +60,7 @@
 
     function editOrder(id) {
         createModal({
-            url: '/EditCustomer',
+            url: '/EditOrder',
             method: 'GET',
             modalId: 'addEditOrderModal',
             id: id,
@@ -71,7 +71,7 @@
 
     function deleteOrder(id) {
         deleteData({
-            url: '/DeleteCustomer',
+            url: '/DeleteOrder',
             id: id,
             fetchTableFn: fetchTableOrders,
             page: orderTablePage
