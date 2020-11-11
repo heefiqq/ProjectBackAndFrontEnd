@@ -1,0 +1,77 @@
+﻿@model ProjectBackAndFrontend.Web.Models.CustomerModel
+
+@{ 
+    var modal = "addEditCustomerModal";
+    var modalForm = "addEditCustomerForm";
+}
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" onclick="modalClose('#@modal')">X</button>
+            <h3>
+                @(Model.CustomerId == 0 ? "Создание пользователя" : "Редактирование пользователя")
+            </h3>
+        </div>
+        <div class="modal-body">
+            <form id="@modalForm">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.CustomerId)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FirstName, "Имя", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FirstName)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LastName, "Фамилия", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LastName)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Password, "Пароль", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Password)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.StandardPhone, "Телефон", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.StandardPhone, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.StandardPhone)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
+                </div>
+            </form>
+            @if (Model.CustomerId != 0)
+            {
+                <div class="row">
+                    <div class="col-lg-1">
+                        <input type="button" class="btn btn-primary" value="Создать" onclick="createOrder()" />
+                    </div>
+                    <div class="col-lg-offset-12"></div>
+                    <div class="col-lg-12" id="orderTable"></div>
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="save({ url: '@Url.Action("AddEditCustomer")', form: '#@modalForm', modalName: '#@modal', fetchTableFn: fetchTableCustomers })">Сохранить</button>
+            <button class="btn btn-danger" onclick="modalClose('#@modal')">Закрыть</button>
+        </div>
+    </div>
+</div>

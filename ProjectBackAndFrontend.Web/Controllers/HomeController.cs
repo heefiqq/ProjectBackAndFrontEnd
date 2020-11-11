@@ -14,13 +14,16 @@ namespace ProjectBackAndFrontend.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ICustomerService _customerService;
+        private readonly IOrderService _orderService;
+        private readonly IOfferService _offerService;
         private readonly int _pageSize = 2;
 
-        public HomeController(ICustomerService customerService)
+        public HomeController(ICustomerService customerService, IOrderService orderService, IOfferService offerService)
         {
             _customerService = customerService;
+            _orderService = orderService;
+            _offerService = offerService;
         }
-
 
         public ActionResult Index(int page = 1)
         {
@@ -28,31 +31,15 @@ namespace ProjectBackAndFrontend.Web.Controllers
             return View();
         }
 
-        [HttpGet]
-        public PartialViewResult GetCustomers(int page = 1)
-        {
-            var customers = _customerService.GetAll();
-            var model = customers.Select(x => new CustomerModel
-            {
-                CustomerId = x.Id,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email,
-                Password = x.Password,
-                StandardPhone = x.StandartPhone,
-                RegistrationDate = x.RegistrationDateTime
-            }).ToPagedList(page, _pageSize);
+        #region customer
 
-            return PartialView("_CustomersList", model);
-        }
-
-        public PartialViewResult Create()
+        public PartialViewResult CreateCustomer()
         {
             var model = new CustomerModel();
-            return PartialView("AddEdit", model);
+            return PartialView("_AddEditCustomer", model);
         }
 
-        public PartialViewResult Edit(int id)
+        public PartialViewResult EditCustomer(int id)
         {
             var customer = _customerService.Get(id);
 
@@ -63,14 +50,14 @@ namespace ProjectBackAndFrontend.Web.Controllers
                 LastName = customer.LastName,
                 Email = customer.Email,
                 Password = customer.Password,
-                StandardPhone = customer.StandartPhone,
+                StandardPhone = customer.StandartPhone
             };
 
-            return PartialView("AddEdit", model);
+            return PartialView("_AddEditCustomer", model);
         }
 
         [HttpPost]
-        public JsonResult AddEdit(CustomerModel model)
+        public JsonResult AddEditCustomer(CustomerModel model)
         {
             if (!ModelState.IsValid)
                 return Json(new { result = false, errorMessage = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
@@ -104,7 +91,7 @@ namespace ProjectBackAndFrontend.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Delete(int id)
+        public JsonResult DeleteCustomer(int id)
         {
             try
             {
@@ -117,5 +104,127 @@ namespace ProjectBackAndFrontend.Web.Controllers
                 return Json(new { result = false, errorMessage = "Ошибка при удалении." });
             }
         }
+
+
+        public PartialViewResult GetCustomers(int page = 1)
+        {
+            var customers = _customerService.GetAll();
+            var model = customers.Select(x => new CustomerModel
+            {
+                CustomerId = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                Password = x.Password,
+                StandardPhone = x.StandartPhone,
+                RegistrationDate = x.RegistrationDateTime
+            }).ToPagedList(page, _pageSize);
+
+            return PartialView("_CustomersList", model);
+        }
+
+        #endregion
+
+        #region orders
+
+        public PartialViewResult CreateOrder()
+        {
+            var model = new OrderModel();
+
+            var offers = _offerService.GetAll();
+            model.OffersArtNo = offers.Select(x => new SelectListItem { Text = string.Format("{0} ({1})", x.Product.Name, x.ArtNo), Value = x.Id.ToString(), Selected = false }).ToList();
+
+            return PartialView("_AddEditOrder", model);
+        }
+
+        public PartialViewResult EditOrder(int id)
+        {
+            var order = _orderService.Get(id);
+
+            var model = new OrderModel
+            {
+                OrderId = order.Id,
+                Number = order.Number,
+                OrderDate = order.OrderDate,
+                PaymentDate = order.PaymentDate,
+                Status = order.Status,
+                Sum = order.Sum,
+            };
+
+            var offers = _offerService.GetAll();
+            model.OffersArtNo = offers.Select(x => new SelectListItem { Text = string.Format("{0} ({1})", x.Product.Name, x.ArtNo), Value = x.Id.ToString(), Selected = order.Offer.Any(y => y.Id == x.Id) }).ToList();
+
+            return PartialView("_AddEditOrder", model);
+        }
+
+        [HttpPost]
+        public JsonResult AddEditOrder(OrderModel model, List<int> offerListIds)
+        {
+            if (!ModelState.IsValid || !offerListIds.Any())
+            {
+                ModelState.AddModelError("offers", "Состав заказа не может быть пустым.");
+                return Json(new { result = false, errorMessage = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
+            }
+
+            try
+            {
+                var order = new Order
+                {
+                    Id = model.OrderId,
+                    Number = model.Number,
+                    PaymentDate = model.PaymentDate,
+                    Status = model.Status,
+                    Sum = model.Sum,
+                    CustomerId = model.CustomerId
+                };
+
+                if (order.Id == 0)
+                {
+                    order.OrderDate = DateTime.Now;
+                    _orderService.Create(order);
+                }
+                else
+                    _orderService.Edit(order);
+
+                return Json(new { result = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { result = false, errorMessage = "Ошбика при сохранении." });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DeleteOrder(int id)
+        {
+            try
+            {
+                _orderService.Delete(id);
+
+                return Json(new { result = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { result = false, errorMessage = "Ошибка при удалении." });
+            }
+        }
+
+        public PartialViewResult GetOrders(int page = 1)
+        {
+            var orders = _orderService.GetAll();
+            var model = orders.Select(x => new OrderModel
+            {
+                OrderId = x.Id,
+                Number = x.Number,
+                OrderDate = x.OrderDate,
+                PaymentDate = x.PaymentDate,
+                Status = x.Status,
+                Sum = x.Sum
+            }).ToPagedList(page, _pageSize);
+
+            return PartialView("_OrdersList", model);
+        }
+
+        #endregion
     }
 }

@@ -1,0 +1,63 @@
+﻿@model ProjectBackAndFrontend.Core.Paging.FilterResult<ProjectBackAndFrontend.Web.Models.OrderModel>
+
+@if (Model.DataItems.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Номер</th>
+                <th scope="col">Дата заказа</th>
+                <th scope="col">Дата оплаты</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Сумма</th>
+                <th scope="col">Заказ</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.DataItems)
+            {
+                <tr>
+                    <td>@order.Number</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.PaymentDate</td>
+                    <td>@order.Status</td>
+                    <td>@order.Sum</td>
+                    <td>@order.OffersArtNo.Select(x => x.Value).Aggregate((x, y) => x + "," + y)</td>
+                    <td><a href="#" class="glyphicon glyphicon-pencil" onclick="editOrder(@order.CustomerId)"></a></td>
+                    <td><a href="#" class="glyphicon glyphicon-remove" onclick="deleteOrder(@order.CustomerId)"></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="pager">
+        Total items @Model.TotalItemsCount
+        <br>
+        Page @(Model.TotalPageCount < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPageCount
+        @for (var i = 1; i <= Model.TotalPageCount; i++)
+        {
+            if (i == Model.PageIndex)
+            {
+                <div>
+                    <span>@i</span>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <a href="#">@i</a>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-lg-2">
+            Нет заказов
+        </div>
+    </div>
+}

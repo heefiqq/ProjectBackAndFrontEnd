@@ -1,0 +1,73 @@
+﻿@model ProjectBackAndFrontend.Web.Models.OrderModel
+
+@{ 
+    var modal = "addEditOrderModal";
+    var modalForm = "addEditOrderForm";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" onclick="modalClose('#@modal')">X</button>
+            <h3>
+                @(Model.OrderId == 0 ? "Создание заказа" : "Редактирование заказа")
+            </h3>
+        </div>
+        <div class="modal-body">
+            <form id="@modalForm">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.OrderId)
+                    @Html.HiddenFor(model => model.CustomerId)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Number, "Номер заказа", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.Number, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Number)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaymentDate, "Дата оплаты", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.PaymentDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PaymentDate)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Status, "Статус", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Status)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Sum, "Сумма", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.Sum, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Sum)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.OffersArtNo, "Заказ", htmlAttributes: new { @class = "control-label col-md-3" })
+                        <div class="col-md-9">
+                            <select multiple id="offerListIds" name="offerListIds" required class="form-control">
+                                @foreach (var offer in Model.OffersArtNo)
+                                {
+                                    <option value="@offer.Value" @(offer.Selected ? "selected=\"selected\"" : string.Empty)>@offer.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="save({ url: '@Url.Action("AddEditOrder")', form: '#@modalForm', modalId: '#@modal', fetchTableFn: fetchTableOrders })">Сохранить</button>
+            <button class="btn btn-danger" onclick="modalClose('#@modal')">Закрыть</button>
+        </div>
+    </div>
+</div>

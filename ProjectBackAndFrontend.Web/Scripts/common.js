@@ -1,18 +1,21 @@
-﻿var $loading = '<div id="loader">Loading...</div>';
+﻿var $loadingTable = '<img class="preloader__table" src="../img/loader.gif" id="loader">';
+var $loadingModal = '<img class="preloader__modal" src="../img/loader.gif" id="loader">';
+var $loadingSave = '<img class="preloader__save" src="../img/loader.gif" id="loader">';
+var $modalConstructor = '<div id="{{modal}}" class="modal" role="dialog"></div>';
 
 //table
 
-function fetchTable(url, method, page, element) {
-    $(element).prepend($loading);
+function fetchTable(model) {
+    $(model.element).prepend($loadingTable);
 
     $.ajax({
-        url: url,
-        type: method,
-        data: { page: page },
+        url: model.url,
+        type: model.method,
+        data: { page: model.page },
         dataType: 'html',
         success: function (data) {
             if (data != null) {
-                $(element).html(data);
+                $(model.element).html(data);
             }
             else {
                 messagesShow('Ошибка!');
@@ -26,22 +29,30 @@ function fetchTable(url, method, page, element) {
     })
 }
 
+function tablePaging(element, fetchTableFn) {
+    $(element).on('click', '.pager a', function (e) {
+        e.preventDefault();
+        var page = parseInt($(this).html());
+        fetchTableFn(page);
+    })
+}
+
 //crud
 
-function save(url, form, modalName, fetchTableFn, element = 'body') {
-    $(element).prepend($loading);
-    var formData = $(form).serialize();
+function save(model) {
+    $(model.modalName + ' .modal-footer').prepend($loadingSave);
+    var formData = $(model.form).serialize();
 
     $.ajax({
-        url: url,
+        url: model.url,
         type: 'POST',
         dataType: 'json',
         data: formData,
         success: function (data) {
             if (data.result == true) {
                 messagesShow('Сохранено успешно.');
-                modalClose(modalName);
-                fetchTableFn(currentPage);
+                modalClose(model.modalName);
+                model.fetchTableFn(model.pageTable);
             }
             else {
                 messagesShow(data.errorMessage);
@@ -57,18 +68,16 @@ function save(url, form, modalName, fetchTableFn, element = 'body') {
     })
 }
 
-function deleteData(url, id, fetchTableFn, element = 'body') {
-    $(element).prepend($loading);
-
+function deleteData(model) {
     $.ajax({
-        url: url,
+        url: model.url,
         type: 'POST',
         dataType: 'json',
-        data: { Id: id },
+        data: { Id: model.id },
         success: function (data) {
             if (data.result == true) {
                 messagesShow('Успешно удалено.');
-                fetchTableFn(currentPage);
+                model.fetchTableFn(model.page);
             }
             else {
                 messagesShow(data.errorMessage);
@@ -86,16 +95,22 @@ function deleteData(url, id, fetchTableFn, element = 'body') {
 
 //modal
 
-function fetchModal(url, method, modalId, id = 0, element = 'body') {
-    $(element).prepend($loading);
+function createModal(model) {
+    $('body').append($modalConstructor.replace('{{modal}}', model.modalId));
 
+    $('#' + model.modalId).modal('show').prepend($loadingModal);
+
+    fetchModal(model);
+}
+
+function fetchModal(model) {
     var options = {
-        url: url,
-        type: method,
+        url: model.url,
+        type: model.method,
         dataType: 'html',
         success: function (data) {
             if (data != null) {
-                $(element).append(data);
+                $('#' + model.modalId).html(data);
             }
             else {
                 messagesShow('Ошибка!');
@@ -106,14 +121,16 @@ function fetchModal(url, method, modalId, id = 0, element = 'body') {
         }
     };
 
-    if (id != 0) {
-        options.data = { Id: id };
+    if (model.id != null) {
+        options.data = { Id: model.id };
     }
 
     $.ajax(options).done(function () {
         $('#loader').remove();
-        $('#' + modalId).modal('show');
-    })
+        if (model.fetchTableFn != null) {
+            model.fetchTableFn(model.page ?? 1);
+        }
+    });
 }
 
 function modalClose(modalName) {
@@ -140,7 +157,7 @@ async function toaster(html, index) {
         toastHtml.css('display', 'none');
         $('#toaster' + index).remove();
         toasterIndex--;
-    }, 2000);
+    }, 5000);
 }
 
 function messagesShow(message) {
