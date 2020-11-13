@@ -144,6 +144,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Catalog\OfferModel.cs" />
+    <Compile Include="Models\Catalog\ProductModel.cs" />
     <Compile Include="Models\Customer\CustomerModel.cs" />
     <Compile Include="Models\Order\OrderModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -191,10 +193,15 @@
     <Content Include="Views\Home\_CustomersList.cshtml" />
     <Content Include="Views\Home\_OrdersList.cshtml" />
     <Content Include="Views\Home\_AddEditOrder.cshtml" />
+    <Content Include="Views\Product\_AddEditProduct.cshtml" />
+    <Content Include="Views\Product\_AddEditOffer.cshtml" />
+    <Content Include="Views\Product\_OffersList.cshtml" />
+    <Content Include="Views\Product\_ProductsList.cshtml" />
+    <Content Include="Views\Product\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Product\" />
+    <Folder Include="Scripts\plugins\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
