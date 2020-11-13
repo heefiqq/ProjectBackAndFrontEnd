@@ -1,6 +1,6 @@
-﻿var $loadingTable = '<img class="preloader__table" src="../img/loader.gif" id="loader">';
-var $loadingModal = '<img class="preloader__modal" src="../img/loader.gif" id="loader">';
-var $loadingSave = '<img class="preloader__save" src="../img/loader.gif" id="loader">';
+﻿var $loadingTable = '<img class="preloader__table" src="../img/loader.gif" id="loaderTable">';
+var $loadingModal = '<img class="preloader__modal" src="../img/loader.gif" id="loaderModal">';
+var $loadingSave = '<img class="preloader__save" src="../img/loader.gif" id="loaderSave">';
 var $modalConstructor = '<div id="{{modal}}" class="modal" role="dialog"></div>';
 
 //table
@@ -11,7 +11,7 @@ function fetchTable(model) {
     $.ajax({
         url: model.url,
         type: model.method,
-        data: { page: model.page },
+        data: model.data,
         dataType: 'html',
         success: function (data) {
             if (data != null) {
@@ -25,15 +25,15 @@ function fetchTable(model) {
             messagesShow('Ошибка! Пожалуйста попробуйте ещё раз.')
         }
     }).done(function () {
-        $('#loader').remove();
+        $($loadingTable).remove();
     })
 }
 
-function tablePaging(element, fetchTableFn) {
+function tablePaging(element, fetchTableFn, params = {}) {
     $(element).on('click', '.pager a', function (e) {
         e.preventDefault();
-        var page = parseInt($(this).html());
-        fetchTableFn(page);
+        params.page = parseInt($(this).html());
+        fetchTableFn(params);
     })
 }
 
@@ -41,7 +41,7 @@ function tablePaging(element, fetchTableFn) {
 
 function save(model) {
     $(model.modalName + ' .modal-footer').prepend($loadingSave);
-    var formData = $(model.form).serialize();
+    var formData = model.data ?? $(model.form).serialize();
 
     $.ajax({
         url: model.url,
@@ -52,7 +52,7 @@ function save(model) {
             if (data.result == true) {
                 messagesShow('Сохранено успешно.');
                 modalClose(model.modalName);
-                model.fetchTableFn(model.pageTable);
+                model.fetchTableFn(model.params);
             }
             else {
                 messagesShow(data.errorMessage);
@@ -64,11 +64,13 @@ function save(model) {
             }
         }
     }).done(function () {
-        $('#loader').remove();
+        $($loadingSave).remove();
     })
 }
 
 function deleteData(model) {
+    $(model.element).prepend($loadingTable);
+
     $.ajax({
         url: model.url,
         type: 'POST',
@@ -77,7 +79,7 @@ function deleteData(model) {
         success: function (data) {
             if (data.result == true) {
                 messagesShow('Успешно удалено.');
-                model.fetchTableFn(model.page);
+                model.fetchTableFn(model.params);
             }
             else {
                 messagesShow(data.errorMessage);
@@ -89,13 +91,13 @@ function deleteData(model) {
             }
         }
     }).done(function () {
-        $('#loader').remove();
+        $($loadingTable).remove();
     })
 }
 
 //modal
 
-function createModal(model) {
+async function createModal(model) {
     $('body').append($modalConstructor.replace('{{modal}}', model.modalId));
 
     $('#' + model.modalId).modal('show').prepend($loadingModal);
@@ -104,10 +106,11 @@ function createModal(model) {
 }
 
 function fetchModal(model) {
-    var options = {
+    $.ajax({
         url: model.url,
         type: model.method,
         dataType: 'html',
+        data: model.data,
         success: function (data) {
             if (data != null) {
                 $('#' + model.modalId).html(data);
@@ -119,16 +122,10 @@ function fetchModal(model) {
         error: function () {
             messagesShow('Ошибка! Пожалуйста попробуйте ещё раз.')
         }
-    };
-
-    if (model.id != null) {
-        options.data = { Id: model.id };
-    }
-
-    $.ajax(options).done(function () {
-        $('#loader').remove();
-        if (model.fetchTableFn != null) {
-            model.fetchTableFn(model.page ?? 1);
+    }).done(function () {
+        $($loadingModal).remove();
+        if (model.onModalLoad != null) {
+            model.onModalLoad();
         }
     });
 }
@@ -180,4 +177,55 @@ function messagesShow(message) {
         var toasterContent = constructorMessages.replace('{{index}}', toasterIndex).replace('{{message}}', message != null && message != '' ? message : 'Ошибка');
         toaster(toasterContent, toasterIndex);
     }
+}
+
+//validate
+
+function validateNum(e) {
+    var charCode = (e.which) ? e.which : e.keyCode;
+    if (charCode != 46 && charCode != 48 && charCode != 49 && charCode != 50 && charCode != 51 && charCode != 52 && charCode != 53 && charCode != 54 && charCode != 55 && charCode != 56 && charCode != 57 && charCode != 8)
+        return false;
+
+    var elem = $(e.target);
+
+    var elemValue = elem.val().replace(/\s+/g, '');
+    if (elemValue.indexOf('.') > 0 && charCode == 46)
+        return false;
+
+    if (elemValue == '' && charCode == 46) {
+        elem.val('0');
+        return true;
+    }
+}
+
+//mask
+
+function maskNum(e) {
+    var elem = $(e.target);
+
+    var elemValue = elem.val().replace(/\s+/g, '');
+
+    var index = elemValue.indexOf('.');
+
+    if ((elemValue.length - 1) == index)
+        return;
+
+    if ((elemValue.length - index) > 3) {
+        var val = '';
+        for (var i = 0; elemValue.length > i; i++) {
+            if (elemValue[i] == '.') {
+                val += elemValue[i + 1];
+                val += '.';
+                i++;
+            } else {
+                val += elemValue[i];
+            }
+        }
+        elemValue = val;
+    }
+
+    var floatValue = parseFloat((elemValue));
+
+    elem.val(floatValue.toLocaleString('ru').replace(',', '.'));
+    return;
 }

@@ -1,43 +1,43 @@
-﻿function fetchTableCustomers(page) {
+﻿function fetchTableCustomers(params) {
     var urlFetchingTable = '/GetCustomers';
     fetchTable({
         url: urlFetchingTable,
         method: 'GET',
-        page: page,
+        data: params,
         element: '#customerTable'
     });
-    customerTablePage = page;
+    customerTablePage = params.page;
 }
 
-function fetchTableOrders(page) {
+function fetchTableOrders(params) {
     var urlFetchingTable = '/GetOrders';
     fetchTable({
         url: urlFetchingTable,
         method: 'GET',
-        page: page,
+        data: params,
         element: '#orderTable'
     });
-    orderTablePage = page;
+    orderTablePage = params.page;
 }
 
-function fetchTableProducts(page) {
+function fetchTableProducts(params) {
     var urlFetchingTable = '/Product/GetProducts';
     fetchTable({
         url: urlFetchingTable,
         method: 'GET',
-        page: page,
+        data: params,
         element: '#productTable'
     });
-    productTablePage = page;
+    productTablePage = params.page;
 }
 
-function fetchTableOffers(page) {
-    var urlFetchingTable = '/Product/GetOfferss';
+function fetchTableOffers(params) {
+    var urlFetchingTable = '/Product/GetOffers';
     fetchTable({
         url: urlFetchingTable,
         method: 'GET',
-        page: page,
+        data: params,
         element: '#offerTable'
     });
-    offerTablePage = page;
+    offerTablePage = params.page;
 }
