@@ -1,0 +1,63 @@
+﻿@model ProjectBackAndFrontend.Web.Models.OfferModel
+
+@{
+    var modal = "addEditOfferModal";
+    var modalForm = "addEditOfferForm";
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" onclick="modalClose('#@modal')">X</button>
+            <h3>
+                @(Model.Id == 0 ? "Создание оффера" : "Редактирование оффера")
+            </h3>
+        </div>
+        <div class="modal-body">
+            <form id="@modalForm">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.HiddenFor(model => model.ProductId)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Amount, "Количество", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Amount)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Price, "Цена", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control", @onkeypress = "return validateNum(event);", @oninput = "maskNum(event);" } })
+                            @Html.ValidationMessageFor(model => model.Price)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ArtNo, "Артикул", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ArtNo, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ArtNo)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Main, "Основной", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.Main)
+                                @Html.ValidationMessageFor(model => model.Main)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="sendFormOffer({ url: '@Url.Action("AddEditOffer")', form: '#@modalForm', modalName: '#@modal', fetchTableFn: fetchTableOffers, params: { page: offerTablePage, ProductId: @Model.ProductId } })">Сохранить</button>
+            <button class="btn btn-danger" onclick="modalClose('#@modal')">Закрыть</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="jumbotron">
+    <h1>This test project</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-1">
+        <input type="button" class="btn btn-primary" value="Создать" onclick="createProduct()" />
+    </div>
+    <div class="col-lg-offset-12"></div>
+    <div class="col-lg-12" id="productTable"></div>
+</div>
+
+<script>
+
+    var productTablePage = @ViewBag.Page;
+    var offerTablePage = 1;
+
+    $(document).ready(function () {
+        fetchTableProducts(productTablePage);
+
+        tablePaging('#productTable', fetchTableProducts);
+    })
+
+    function createProduct() {
+        createModal({ url: '/Product/CreateProduct', methi: 'GET', modalId: 'addEditProductModal' });
+    }
+
+    function editProduct(id) {
+        createModal({
+            url: '/Product/EditProduct',
+            method: 'GET',
+            modalId: 'addEditProductModal',
+            data: { Id: id },
+            fetchTableFn: fetchTableProducts,
+            page: productTablePage,
+            onModalLoad: function () {
+                fetchTableOffers({ page: offerTablePage, ProductId: id });
+
+                tablePaging('#offerTable', fetchTableOffers, { ProductId: id });
+            }
+        });
+    }
+
+    function deleteProduct(id) {
+        deleteData({
+            url: '/Product/DeleteProduct',
+            id: id,
+            fetchTableFn: fetchTableProducts,
+            page: productTablePage
+        });
+    }
+
+    function createOffer(productId) {
+        createModal({ url: '/Product/CreateOffer', method: 'GET', data: { ProductId: productId }, modalId: 'addEditOfferModal'});
+    }
+
+    function editOffer(id) {
+        createModal({
+            url: '/Product/EditOffer',
+            method: 'GET',
+            modalId: 'addEditOfferModal',
+            data: { Id: id },
+            fetchTableFn: fetchTableOffers,
+            page: offerTablePage
+        });
+    }
+
+    function deleteOffer(id, productId) {
+        deleteData({
+            url: '/Product/DeleteOffer',
+            id: id,
+            fetchTableFn: fetchTableOffers,
+            params: { page: offerTablePage, ProductId: productId }
+        });
+    }
+
+
+    function sendFormOffer(model) {
+        var formData = $(model.form).serializeArray();
+        var data = {};
+        formData.forEach(function (el, index) {
+            if (el.name == 'Main' && index == 6)
+                return;
+            else
+                data[el.name] = el.value;
+        });
+        data.Price = data.Price.replace(/\s+/g, '').replace('.', ',');
+        model.data = data;
+        save(model);
+    }
+</script>

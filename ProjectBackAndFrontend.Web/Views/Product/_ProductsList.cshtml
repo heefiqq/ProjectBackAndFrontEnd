@@ -1,0 +1,64 @@
+﻿@model ProjectBackAndFrontend.Core.Paging.FilterResult<ProjectBackAndFrontend.Web.Models.ProductModel>
+
+@if (Model.DataItems.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Артикул</th>
+                <th scope="col">Название</th>
+                <th scope="col">Дата создания</th>
+                <th scope="col">Дата редактирования</th>
+                <th scope="col">Активность</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.DataItems)
+            {
+                <tr>
+                    <td>@item.ArtNo</td>
+                    <td>@item.Name</td>
+                    <td>@item.Created</td>
+                    <td>@item.Modified</td>
+                    <td>@(item.Enabled ? "Активен" : "Не активен")</td>
+                    <td><a href="#" class="glyphicon glyphicon-pencil" onclick="editProduct(@item.Id)"></a></td>
+                    <td><a href="#" class="glyphicon glyphicon-remove" onclick="deleteProduct(@item.Id)"></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="pager">
+        <div>
+            Total items @Model.TotalItemsCount
+        </div>
+        <div>
+            Page @(Model.TotalPageCount < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPageCount
+        </div>
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.TotalPageCount; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : string.Empty)">
+                    @if (i == Model.PageIndex)
+                    {
+                        <span>@i</span>
+                    }
+                    else
+                    {
+                        <a href="#">@i</a>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-lg-3">
+            Нет товаров
+        </div>
+    </div>
+}

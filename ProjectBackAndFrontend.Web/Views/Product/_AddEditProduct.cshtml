@@ -1,0 +1,63 @@
+﻿@model ProjectBackAndFrontend.Web.Models.ProductModel
+
+@{
+    var modal = "addEditProductModal";
+    var modalForm = "addEditProductForm";
+}
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close" onclick="modalClose('#@modal')">X</button>
+            <h3>
+                @(Model.Id == 0 ? "Создание товара" : "Редактирование товара")
+            </h3>
+        </div>
+        <div class="modal-body">
+            <form id="@modalForm">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.Id)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ArtNo, "Артикул", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.ArtNo, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ArtNo)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name, "Название", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Name)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Enabled, "Активность", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.Enabled, new { htmlAttributes = new { @style = "margin-left: unset;" } })
+                                @Html.ValidationMessageFor(model => model.Enabled)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            @if (Model.Id != 0)
+            {
+                <div class="row">
+                    <div class="col-lg-1">
+                        <input type="button" class="btn btn-primary" value="Создать" onclick="createOffer(@Model.Id)" />
+                    </div>
+                    <div class="col-lg-offset-12"></div>
+                    <div class="col-lg-12" id="offerTable"></div>
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" onclick="save({ url: '@Url.Action("AddEditProduct", "Product")', form: '#@modalForm', modalName: '#@modal', fetchTableFn: fetchTableProducts, params: { page: productTablePage } })">Сохранить</button>
+            <button class="btn btn-danger" onclick="modalClose('#@modal'); offerTablePage = 1;">Закрыть</button>
+        </div>
+    </div>
+</div>
