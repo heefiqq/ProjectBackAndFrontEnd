@@ -118,7 +118,7 @@ namespace ProjectBackAndFrontend.Web.Controllers
                 Password = x.Password,
                 StandardPhone = x.StandartPhone,
                 RegistrationDate = x.RegistrationDateTime
-            }).ToPagedList(page, _pageSize);
+            }).OrderBy(x => x.CustomerId).ToPagedList(page, _pageSize);
 
             return PartialView("_CustomersList", model);
         }
@@ -127,9 +127,12 @@ namespace ProjectBackAndFrontend.Web.Controllers
 
         #region orders
 
-        public PartialViewResult CreateOrder()
+        public PartialViewResult CreateOrder(int CustomerId)
         {
-            var model = new OrderModel();
+            var model = new OrderModel()
+            {
+                CustomerId = CustomerId
+            };
 
             var offers = _offerService.GetAll();
             model.OffersArtNo = offers.Select(x => new SelectListItem { Text = string.Format("{0} ({1})", x.Product.Name, x.ArtNo), Value = x.Id.ToString(), Selected = false }).ToList();
@@ -143,6 +146,7 @@ namespace ProjectBackAndFrontend.Web.Controllers
 
             var model = new OrderModel
             {
+                CustomerId = order.CustomerId,
                 OrderId = order.Id,
                 Number = order.Number,
                 OrderDate = order.OrderDate,
@@ -160,11 +164,10 @@ namespace ProjectBackAndFrontend.Web.Controllers
         [HttpPost]
         public JsonResult AddEditOrder(OrderModel model, List<int> offerListIds)
         {
-            if (!ModelState.IsValid || !offerListIds.Any())
-            {
+            if (offerListIds == null || !offerListIds.Any())
                 ModelState.AddModelError("offers", "Состав заказа не может быть пустым.");
+            if (!ModelState.IsValid)
                 return Json(new { result = false, errorMessage = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
-            }
 
             try
             {
@@ -177,14 +180,13 @@ namespace ProjectBackAndFrontend.Web.Controllers
                     Sum = model.Sum,
                     CustomerId = model.CustomerId
                 };
-
-                if (order.Id == 0)
+                if (model.OrderId == 0)
                 {
                     order.OrderDate = DateTime.Now;
-                    _orderService.Create(order);
+                    _orderService.Create(order, offerListIds);
                 }
                 else
-                    _orderService.Edit(order);
+                    _orderService.Edit(order, offerListIds);
 
                 return Json(new { result = true });
             }
@@ -209,9 +211,9 @@ namespace ProjectBackAndFrontend.Web.Controllers
             }
         }
 
-        public PartialViewResult GetOrders(int page = 1)
+        public PartialViewResult GetOrders(int CustomerId, int page = 1)
         {
-            var orders = _orderService.GetAll();
+            var orders = _orderService.GetAll().Where(x => x.CustomerId == CustomerId);
             var model = orders.Select(x => new OrderModel
             {
                 OrderId = x.Id,
@@ -219,8 +221,9 @@ namespace ProjectBackAndFrontend.Web.Controllers
                 OrderDate = x.OrderDate,
                 PaymentDate = x.PaymentDate,
                 Status = x.Status,
-                Sum = x.Sum
-            }).ToPagedList(page, _pageSize);
+                Sum = x.Sum,
+                OffersArtNo = x.Offer.Select(y => new SelectListItem { Text = string.Format("{0} ({1})", y.Product.Name, y.ArtNo), Value = y.Id.ToString(), Selected = false }).ToList()
+            }).OrderBy(x => x.OrderId).ToPagedList(page, _pageSize);
 
             return PartialView("_OrdersList", model);
         }

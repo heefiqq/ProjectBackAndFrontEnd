@@ -33,30 +33,33 @@
     </table>
 
     <div class="pager">
-        Total items @Model.TotalItemsCount
-        <br>
-        Page @(Model.TotalPageCount < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPageCount
-        @for (var i = 1; i <= Model.TotalPageCount; i++)
-        {
-            if (i == Model.PageIndex)
+        <div>
+            Total items @Model.TotalItemsCount
+        </div>
+        <div>
+            Page @(Model.TotalPageCount < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPageCount
+        </div>
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.TotalPageCount; i++)
             {
-                <div>
-                    <span>@i</span>
-                </div>
+                <li class="page-item @(i == Model.PageIndex ? "active" : string.Empty)">
+                    @if (i == Model.PageIndex)
+                    {
+                        <span>@i</span>
+                    }
+                    else
+                    {
+                        <a href="#">@i</a>
+                    }
+                </li>
             }
-            else
-            {
-                <div>
-                    <a href="#">@i</a>
-                </div>
-            }
-        }
+        </ul>
     </div>
 }
 else
 {
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             Нет зарегистрированных пользователей
         </div>
     </div>

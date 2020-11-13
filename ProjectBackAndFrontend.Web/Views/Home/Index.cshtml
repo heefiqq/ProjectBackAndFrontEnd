@@ -35,14 +35,15 @@
             url: '/EditCustomer',
             method: 'GET',
             modalId: 'addEditCustomerModal',
-            id: id,
+            data: { Id: id },
             fetchTableFn: fetchTableCustomers,
-            page: customerTablePage
+            page: customerTablePage,
+            onModalLoad: function () {
+                fetchTableOrders({ page: orderTablePage, CustomerId: id });
+
+                tablePaging('#orderTable', fetchTableOrders, { CustomerId: id });
+            }
         });
-
-        fetchTableOrders(orderTablePage);
-
-        tablePaging('#orderTable', fetchTableOrders);
     }
 
     function deleteCustomer(id) {
@@ -54,8 +55,8 @@
         });
     }
 
-    function createOrder() {
-        createModal({ url: '/CreateOrder', method: 'GET', modalId: 'addEditOrderModal'});
+    function createOrder(customerId) {
+        createModal({ url: '/CreateOrder', method: 'GET', data: { CustomerId: customerId }, modalId: 'addEditOrderModal'});
     }
 
     function editOrder(id) {
@@ -63,18 +64,34 @@
             url: '/EditOrder',
             method: 'GET',
             modalId: 'addEditOrderModal',
-            id: id,
+            data: { Id: id },
             fetchTableFn: fetchTableOrders,
             page: orderTablePage
         });
     }
 
-    function deleteOrder(id) {
+    function deleteOrder(id, customerId) {
         deleteData({
             url: '/DeleteOrder',
             id: id,
             fetchTableFn: fetchTableOrders,
-            page: orderTablePage
+            params: { page: orderTablePage, CustomerId: customerId }
         });
+    }
+
+    function sendFormOrder(model) {
+        var formData = $(model.form).serializeArray();
+        var data = {};
+        var offers = [];
+        formData.forEach(function (el) {
+            if (el.name == 'offerListIds')
+                offers.push(el.value);
+            else
+                data[el.name] = el.value;
+        });
+        data.Sum = data.Sum.replace(/\s+/g, '').replace('.', ',');
+        data.offerListIds = offers;
+        model.data = data;
+        save(model);
     }
 </script>

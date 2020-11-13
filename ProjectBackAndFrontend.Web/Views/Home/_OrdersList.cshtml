@@ -1,6 +1,6 @@
 ﻿@model ProjectBackAndFrontend.Core.Paging.FilterResult<ProjectBackAndFrontend.Web.Models.OrderModel>
 
-@if (Model.DataItems.Any())
+@if (Model.DataItems != null && Model.DataItems.Any())
 {
     <table class="table">
         <thead>
@@ -24,39 +24,42 @@
                     <td>@order.PaymentDate</td>
                     <td>@order.Status</td>
                     <td>@order.Sum</td>
-                    <td>@order.OffersArtNo.Select(x => x.Value).Aggregate((x, y) => x + "," + y)</td>
-                    <td><a href="#" class="glyphicon glyphicon-pencil" onclick="editOrder(@order.CustomerId)"></a></td>
-                    <td><a href="#" class="glyphicon glyphicon-remove" onclick="deleteOrder(@order.CustomerId)"></a></td>
+                    <td>@order.OffersArtNo.Select(x => x.Text).Aggregate((x, y) => x + "," + y)</td>
+                    <td><a href="#" class="glyphicon glyphicon-pencil" onclick="editOrder(@order.OrderId)"></a></td>
+                    <td><a href="#" class="glyphicon glyphicon-remove" onclick="deleteOrder(@order.OrderId, @order.CustomerId)"></a></td>
                 </tr>
             }
         </tbody>
     </table>
 
     <div class="pager">
-        Total items @Model.TotalItemsCount
-        <br>
-        Page @(Model.TotalPageCount < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPageCount
-        @for (var i = 1; i <= Model.TotalPageCount; i++)
-        {
-            if (i == Model.PageIndex)
+        <div>
+            Total items @Model.TotalItemsCount
+        </div>
+        <div>
+            Page @(Model.TotalPageCount < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPageCount
+        </div>
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.TotalPageCount; i++)
             {
-                <div>
-                    <span>@i</span>
-                </div>
+                <li class="page-item @(i == Model.PageIndex ? "active" : string.Empty)">
+                    @if (i == Model.PageIndex)
+                    {
+                        <span>@i</span>
+                    }
+                    else
+                    {
+                        <a href="#">@i</a>
+                    }
+                </li>
             }
-            else
-            {
-                <div>
-                    <a href="#">@i</a>
-                </div>
-            }
-        }
+        </ul>
     </div>
 }
 else
 {
     <div class="row">
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             Нет заказов
         </div>
     </div>

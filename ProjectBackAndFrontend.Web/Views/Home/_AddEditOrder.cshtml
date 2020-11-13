@@ -30,7 +30,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.PaymentDate, "Дата оплаты", htmlAttributes: new { @class = "control-label col-md-3" })
                         <div class="col-md-9">
-                            @Html.EditorFor(model => model.PaymentDate, new { htmlAttributes = new { @class = "form-control" } })
+                            <input type="date" id="PaymentDate" name="PaymentDate" value="@(Model.PaymentDate.HasValue ? Model.PaymentDate.Value.ToString("yyyy-MM-dd") : string.Empty)" class="form-control" />
                             @Html.ValidationMessageFor(model => model.PaymentDate)
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.Sum, "Сумма", htmlAttributes: new { @class = "control-label col-md-3" })
                         <div class="col-md-9">
-                            @Html.EditorFor(model => model.Sum, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.EditorFor(model => model.Sum, new { htmlAttributes = new { @class = "form-control", @onkeypress = "return validateNum(event);", @oninput = "maskNum(event);" } })
                             @Html.ValidationMessageFor(model => model.Sum)
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                             <select multiple id="offerListIds" name="offerListIds" required class="form-control">
                                 @foreach (var offer in Model.OffersArtNo)
                                 {
-                                    <option value="@offer.Value" @(offer.Selected ? "selected=\"selected\"" : string.Empty)>@offer.Value</option>
+                                    <option value="@offer.Value" @(offer.Selected ? "selected=\"selected\"" : string.Empty)>@offer.Text</option>
                                 }
                             </select>
                         </div>
@@ -66,8 +66,11 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-success" onclick="save({ url: '@Url.Action("AddEditOrder")', form: '#@modalForm', modalId: '#@modal', fetchTableFn: fetchTableOrders })">Сохранить</button>
+            <button class="btn btn-success" onclick="sendFormOrder({ url: '@Url.Action("AddEditOrder")', form: '#@modalForm', modalName: '#@modal', fetchTableFn: fetchTableOrders, params: { page: orderTablePage, CustomerId: @Model.CustomerId} })">Сохранить</button>
             <button class="btn btn-danger" onclick="modalClose('#@modal')">Закрыть</button>
         </div>
     </div>
 </div>
+<script>
+    $('#offerListIds').chosen();
+</script>
