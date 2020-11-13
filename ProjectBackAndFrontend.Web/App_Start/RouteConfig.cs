@@ -14,6 +14,18 @@ namespace ProjectBackAndFrontend.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "Product",
+                url: "Product/{action}/{id}",
+                defaults: new { controller = "Product", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "Home",
+                url: "",
+                defaults: new { controller = "Home", action = "Index"}
+            );
+
+            routes.MapRoute(
                 name: "HomeDefaults",
                 url: "{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
