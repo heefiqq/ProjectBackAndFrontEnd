@@ -15,45 +15,59 @@ namespace ProjectBackAndFrontend.Core.Service
             db.Dispose();
         }
 
-        public void Create(Order order)
+        public void Create(Order order, List<int> offerIds)
         {
+            order.Offer.Clear();
+            foreach (var offerId in offerIds)
+            {
+                var offer = db.Offer.SingleOrDefault(x => x.Id == offerId);
+                order.Offer.Add(offer);
+            }
+
             db.Order.Add(order);
+            db.SaveChanges();
         }
 
         public Order Get(int Id)
         {
-            return db.Order.AsNoTracking().Include(x => x.Offer).Include(x => x.Customer).FirstOrDefault(x => x.Id == Id);
+            return db.Order.Include(x => x.Offer).Include(x => x.Customer).SingleOrDefault(x => x.Id == Id);
         }
 
         public List<Order> GetAll()
         {
-            return db.Order.AsNoTracking().Include(x => x.Offer).Include(x => x.Customer).ToList();
+            return db.Order.Include(x => x.Offer).Include(x => x.Customer).ToList();
         }
 
-        public void Edit(Order order)
+        public void Edit(Order order, List<int> offerIds)
         {
-            var orderDb = db.Order.AsNoTracking().FirstOrDefault(x => x.Id == order.Id);
-
-            if (orderDb == null)
-                return;
+            var orderDb = db.Order.Include(x => x.Offer).FirstOrDefault(x => x.Id == order.Id);
 
             orderDb.Number = order.Number;
-            orderDb.PaymentDate = DateTime.Now;
+            orderDb.PaymentDate = order.PaymentDate;
             orderDb.Status = order.Status;
             orderDb.Sum = order.Sum;
+
+            orderDb.Offer.Clear();
+            foreach (var offerId in offerIds)
+            {
+                var offer = db.Offer.SingleOrDefault(x => x.Id == offerId);
+                orderDb.Offer.Add(offer);
+            }
 
             db.Entry(orderDb).State = EntityState.Modified;
             db.SaveChanges();
         }
 
+
         public void Delete(int Id)
         {
-            var offerDb = db.Offer.AsNoTracking().FirstOrDefault(x => x.Id == Id);
+            var orderDb = db.Order.FirstOrDefault(x => x.Id == Id);
 
-            if (offerDb == null)
+            if (orderDb == null)
                 return;
 
-            db.Offer.Remove(offerDb);
+            orderDb.Offer.Clear();
+            db.Order.Remove(orderDb);
             db.SaveChanges();
         }
     }

@@ -23,7 +23,7 @@ namespace ProjectBackAndFrontend.Core.Service
 
         public Offer Get(int Id)
         {
-            return db.Offer.AsNoTracking().Include(x => x.Product).FirstOrDefault(x => x.Id == Id);
+            return db.Offer.AsNoTracking().Include(x => x.Product).SingleOrDefault(x => x.Id == Id);
         }
 
         public List<Offer> GetAll()
@@ -49,11 +49,9 @@ namespace ProjectBackAndFrontend.Core.Service
 
         public void Delete(int Id)
         {
-            var offerDb = db.Offer.AsNoTracking().FirstOrDefault(x => x.Id == Id);
+            var offerDb = db.Offer.AsNoTracking().Single(x => x.Id == Id);
 
-            if (offerDb == null)
-                return;
-
+            db.Offer.Attach(offerDb);
             db.Offer.Remove(offerDb);
             db.SaveChanges();
         }

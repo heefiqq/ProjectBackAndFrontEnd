@@ -8,6 +8,11 @@ namespace ProjectBackAndFrontend.Core.Models
     [Table("Offer", Schema = "Catalog")]
     public class Offer
     {
+        public Offer()
+        {
+            Order = new HashSet<Order>();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -24,6 +29,7 @@ namespace ProjectBackAndFrontend.Core.Models
         public bool Main { get; set; }
 
         public virtual Product Product { get; set; }
+
         public virtual ICollection<Order> Order { get; set; }
     }
 }

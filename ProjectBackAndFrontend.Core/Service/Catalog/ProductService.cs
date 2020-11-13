@@ -49,20 +49,9 @@ namespace ProjectBackAndFrontend.Core.Service
 
         public void Delete(int Id)
         {
-            var productDb = db.Product.AsNoTracking().FirstOrDefault(x => x.Id == Id);
+            var productDb = db.Product.FirstOrDefault(x => x.Id == Id);
 
-            if (productDb == null)
-                return;
-
-            var offers = db.Offer.AsNoTracking().Where(x => x.ProductId == Id);
-            if (offers.Any())
-            {
-                foreach(var offer in offers)
-                {
-                    db.Offer.Remove(offer);
-                }
-            }
-
+            db.Offer.RemoveRange(productDb.Offer);
             db.Product.Remove(productDb);
             db.SaveChanges();
         }
