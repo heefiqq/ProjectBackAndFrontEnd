@@ -165,7 +165,7 @@ namespace ProjectBackAndFrontend.Web.Controllers
         public JsonResult AddEditOrder(OrderModel model, List<int> offerListIds)
         {
             if (offerListIds == null || !offerListIds.Any())
-                ModelState.AddModelError("offers", "Состав заказа не может быть пустым. ");
+                ModelState.AddModelError("offers", "Состав заказа не может быть пустым.");
             if (!ModelState.IsValid)
                 return Json(new { result = false, errorMessage = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage)) });
 
